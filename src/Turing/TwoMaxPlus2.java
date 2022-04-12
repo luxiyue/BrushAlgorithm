@@ -11,6 +11,7 @@ import java.util.Arrays;
 public class TwoMaxPlus2 {
     public static void main(String[] args) {
         System.out.println(Arrays.toString(twoSearch(new int[]{1,2,3,4,5,6},10)));
+        System.out.println(Arrays.toString(twoPoint(new int[]{1,2,3,4,5,6},10)));
     }
     //本题是上一题的变种，所以上面的两种方法都可以用于这一题
 
@@ -40,8 +41,27 @@ public class TwoMaxPlus2 {
 
 
     //方法二：双指针
+
+    /**
+     * 核心思路：
+     * 当左指针加右指针小于target，左指针右移
+     * 当左指针加右指针大于target，右指针左移
+     */
     public static int[] twoPoint(int[] numbers,int target){
-        return null;
+        if (numbers.length < 2){
+            return new int[0];
+        }
+        int low = 0,high = numbers.length -1 ;
+        while (low <= target){
+            if (numbers[low] + numbers[high] == target) {
+                return new int[]{low,high};
+            } else if (numbers[low] + numbers[high] < target) {
+                low++;
+            }else {
+                high--;
+            }
+        }
+        return new int[0];
     }
 
 }
