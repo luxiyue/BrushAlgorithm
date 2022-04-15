@@ -26,7 +26,7 @@ public class ProvinceNums {
                 {0,0,0,0,0,1,1}
         }));//2
         System.out.println(getProvice(new int[][]{{1,0,0},{0,1,0},{0,0,1}}));//3
-        System.out.println(bfs(new int[][]{
+        System.out.println(binSearch(new int[][]{
                 {1,1,1,0,0,0,0},
                 {1,1,0,0,0,0,0},
                 {1,0,1,1,1,0,0},
@@ -98,5 +98,68 @@ public class ProvinceNums {
             }
         }
         return provinces;
+    }
+
+
+
+
+
+
+    /**
+     * 方法三：并查集
+     * 将省份看做一颗树
+     */
+    public static int binSearch(int[][] citysConnected){
+        int citys = citysConnected.length;
+        //head中存放每个节点的 根节点 位置，如果根节点相同，说明在一个省份
+        int[] head = new int[citys];
+        int[] level = new int[citys];
+        //初始化操作
+        for (int i = 0;i < citys;i++) {
+            head[i] = i;
+            level[i] = i;
+        }
+        //下面操作主要是维护head数组中的元素
+        for (int i = 0;i < citys; i++) {
+            for (int j = i + 1;j < citys ;j++) {
+                if (citysConnected[i][j] == 1) {
+                    merge(i,j,head,level);
+                }
+            }
+        }
+        int count = 0;
+        for (int i = 0; i < citys;i++){
+            if (head[i] == i){
+                count ++;
+            }
+        }
+        return count;
+    }
+    //下面操作主要是维护head数组中的元素
+    static void merge(int x,int y,int[] head,int[] level){
+        //查找x和y的父节点
+        int i = find(x,head);
+        int j = find(y,head);
+        if (i == j) {
+            return;
+        }
+        if (level[i] <= level[j]) {
+            head[i] = j;
+        }else {
+            head[j] = i;
+        }
+        //由于level数组不是很重要，所以直接都++
+        if (level[i] == level[j]) {
+            level[i]++;
+            level[j]++;
+        }
+    }
+    //查找根节点
+    private static int find(int x, int[] head) {
+        if (head[x] == x){
+            return x;
+        }
+        head[x] = find(head[x],head);
+        return head[x];
     }
 }
