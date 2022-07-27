@@ -27,8 +27,8 @@ public class BuildBst {
     }
 
     /**
-     *  数组最后一个数字绝对是根结点
-     *  从后往前看，第一个小于根结点的数字一定是左子节点，左子节点到根节点的区域肯定是右子树
+     *  核心思想：数组最后一个数字绝对是根结点
+     *  从后往前看，第一个小于根结点的数字一定是根结点的左子节点，左子节点到根节点的区域肯定是右子树
      * @param posArr
      * @param L 构建的左起点
      * @param R 构建的右终点
@@ -61,7 +61,9 @@ public class BuildBst {
         return process2(posArr,0,posArr.length -1);
     }
     /**
-     * 针对上面的方法进行二分查找的优化
+     * 针对上面的方法进行二分查找的优化：
+     * 当arr[mid] > arr[R] : 说明现在mid所在的数组区域还处于右子树范围 , 需要继续检查 【L  -  mid-1】范围
+     * 当arr[mid] < arr[R] : 说明现在mid所在的数组区域已经处于左子树上了，但是不能保证是左子树的头节点，需要在 [mid+1 - R ]继续看看
      * @param posArr
      * @param L
      * @param R
