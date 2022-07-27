@@ -10,6 +10,7 @@ import java.nio.file.FileStore;
 public class Rob {
     public static void main(String[] args) {
         int[] nums = {1, 2, 3, 1};
+        System.out.println(maxMoney(nums,nums.length-1));
         System.out.println(maxMoney3(nums));//4
         System.out.println(maxMoney3(new int[]{2,7,9,3,1}));//12
     }
