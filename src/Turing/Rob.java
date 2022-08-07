@@ -83,15 +83,98 @@ public class Rob {
 
 
 /**
- * 升级版，房屋会首尾相连
+ * 升级版，房屋会首尾相连，环形的状态
  */
 class Rob2{
     public static void main(String[] args) {
+        int[] nums = new int[]{2,7,9,3,1};
+        System.out.println(max(nums));
+    }
+
+
+
+    public static int max(int[] nums){
+        return Math.max(maxMoney(nums,0, nums.length-2),maxMoney(nums,1,nums.length-1));
+    }
+
+
+    /**
+     **@see Turing.Rob#maxMoney3(int[])
+     * 该升级版可以抽象出普通版：
+     * 1。取0这个位置，不取index这个位置，即不存在首位相连
+     * 2。取index这个位置，不取0这个位置，也不存在首位相连
+     */
+    private static int maxMoney(int[] nums,int start,int end){
+        if (nums == null || nums.length == 0) {
+            return 0;
+        }
+        if (start > end) {
+            return -1;
+        }
+        //下面才是核心
+        int first = nums[start],second = Math.max(nums[start],nums[start+1]);
+
+        for (int i=start+2;i <= end;i++) {
+            int temp = second;
+            second = Math.max(first+nums[i],second);
+            first = temp;
+        }
+
+        return second;
+    }
+
+}
+
+
+/**
+ * 升级版2：
+ * 在上次打劫完一条街道之后h和一圈房屋后，小偷又发现了一个新的可行窃的地区。这个地区只有一个入口，我们称之为"根"。
+ * 除了根之外，每个房子有且只有一个父房子与之相连，一反侦察之后，聪明的小偷意识到：这个地区所有房子的排列类似一颗二叉树。
+ * 如果两个直接相连的房子在同一天晚上被打劫，房屋将自动报警。
+ * 计算在不触动警报的情况下，小偷一晚上能盗取的最高金额！
+ */
+class Rob3{
+    public static void main(String[] args) {
+        TreeNode treeNode5 = new TreeNode(1, null, null);
+        TreeNode treeNode4 = new TreeNode(3, null, null);
+        TreeNode treeNode3 = new TreeNode(3, null, treeNode5);
+        TreeNode treeNode2 = new TreeNode(2, null, treeNode4);
+        TreeNode treeNode1 = new TreeNode(3, treeNode2, treeNode3);
+
+        int[] dfs = dfs(treeNode1);
+        System.out.println(Math.max(dfs[0],dfs[1]));
 
     }
 
-    private static int maxMoney(int[] nums){
-        return 0;
+
+    /**
+     * 本题的突破口在于叶子节点挂载的null节点
+     * @return int[] {selected最优解，noselect最优解}
+     */
+    private static int[] dfs(TreeNode node){
+        if (node == null) {
+            return new int[] {0,0};
+        }
+        int[] l = dfs(node.left);
+        int[] r = dfs(node.right);
+        int select =  node.val + l[1] + r[1];
+        int noselect = Math.max(l[0],l[1]) + Math.max(r[0],r[1]);
+        return new int[]{select,noselect};
+    }
+
+
+
+
+    static class TreeNode{
+        int val;
+        TreeNode left;
+        TreeNode right;
+        int deep;//bfs算法加入的变量
+        TreeNode(int val, TreeNode left, TreeNode right){
+            this.val = val;
+            this.left = left;
+            this.right = right;
+        }
     }
 
 }
