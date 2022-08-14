@@ -1,15 +1,16 @@
 package zuoGod;
 
 import java.util.HashSet;
+import java.util.TreeSet;
 
 /**
  * @Author： Luzelong
  * @Created： 2022/8/10 20:21
  * 给定一个非负数组arr，和一个正数m
  * 返回arr中所有子序列累加和和%m之后的最大值
- * 1）如果arr中每个数字不大，怎么做这道题
- * 2）如果arr中m的值很小，怎么做这道题
- * 3）如果arr的长度很短，但是arr每个数字比较大并且m比较大
+ * 1）如果arr中每个数字不大，怎么做这道题 max2
+ * 2）如果arr中m的值很小，怎么做这道题 max3
+ * 3）如果arr的长度很短，但是arr每个数字比较大并且m比较大 max4
  */
 public class Maxmold {
 
@@ -137,6 +138,42 @@ public class Maxmold {
             }
         }
         return ans;
+    }
+
+
+    /**
+     * 如果arr的累加和很大，m也很大
+     * 但是arr的长度相对不大，使用用这种拆分的思想
+     *
+     * 比如arr数组长度为35，拆分成长度为17 和 长度为18的数组，分别求累加和，放在数组a和数组b中
+     * 比如m为10
+     * 如果a数组找到元素为2，那么我们就希望在b数组中找一个接近7的元素，才能取得最大的模 -》 9
+     * @param arr
+     * @param m
+     * @return
+     */
+    public static int max4(int[] arr,int m){
+        if (arr.length == 1) {
+            return arr[0] % m;
+        }
+        int mid = (arr.length -1) / 2;
+        TreeSet<Integer> sortSet1 = new TreeSet<>();
+        process4(arr,0,0,mid,m,sortSet1);
+        TreeSet<Integer> sortSet2 = new TreeSet<>();
+        process4(arr,mid + 1,0,arr.length -1, m, sortSet2);
+        int ans = 0;
+        for (Integer left : sortSet1) {
+            ans = Math.max(ans, left + sortSet2.floor(m -1 -left));
+        }
+        return ans;
+    }
+    public static void process4(int[] arr, int index, int sum, int end, int m, TreeSet<Integer> sortSet){
+        if (index == end +1) {
+            sortSet.add(sum % m);
+        }else {
+            process4(arr, index + 1, sum, end, m, sortSet);
+            process4(arr, index + 1, sum + arr[index], end, m, sortSet);
+        }
     }
 
 
