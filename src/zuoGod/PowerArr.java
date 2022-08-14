@@ -28,7 +28,8 @@ public class PowerArr {
         int power = 2;
         int[] arr = new int[]{3,1,4,2};
         int reverseArr[] = new int[]{0,1,0,2};
-        System.out.println(Arrays.toString(reversePair1(arr,reverseArr,power)));
+        System.out.println(Arrays.toString(reversePair1(arr.clone(),reverseArr.clone(),power)));
+        System.out.println(Arrays.toString(reversePair2(arr.clone(),reverseArr.clone(),power)));
     }
 
 
@@ -49,7 +50,6 @@ public class PowerArr {
         }
         return ans;
     }
-
     private static void reverseArray(int[] originArr, int teamSize) {
         if (teamSize < 2) {
             return;
@@ -58,7 +58,6 @@ public class PowerArr {
             reversePart(originArr,i,i+teamSize-1);
         }
     }
-
     private static void reversePart(int[] arr, int L, int R) {
         while(L < R) {
             int temp = arr[L];
@@ -66,7 +65,6 @@ public class PowerArr {
             arr[R--] = temp;
         }
     }
-
     private static int countReversePair(int[] originArr) {
         int ans = 0;
         for (int i=0; i<originArr.length; i++) {
@@ -75,6 +73,72 @@ public class PowerArr {
                     ans++;
                 }
             }
+        }
+        return ans;
+    }
+
+
+
+
+
+
+    public static int[] reversePair2(int[] originArr, int[] reverseArr, int power) {
+        int[] originReverse = originArr.clone();
+        reversePart(originReverse, 0 ,originReverse.length - 1);
+        //recordDown[i] 2的i次方个数一组的划分中，降序的数量
+        int[] recordDown = new int[power + 1];
+        //recordUp[i] 2的i次方个数一组的划分中，升序的数量
+        int[] recordUp = new int[power + 1];
+        process(originArr, 0, originArr.length - 1, power, recordDown);
+        process(originReverse, 0, originReverse.length - 1,power,recordUp);
+
+        //后序操作
+        int ans[] = new int[reverseArr.length];
+        for (int i = 0; i < reverseArr.length; i++) {
+            int curPower = reverseArr[i];
+            for (int p = 1; p <= curPower; p++) {
+                int tmp = recordDown[p];
+                recordDown[p] = recordUp[p];
+                recordUp[p] = tmp;
+            }
+            for (int p = 1; p <= power; p++) {
+                ans[i] += recordDown[p];
+            }
+        }
+        return ans;
+    }
+
+    /**
+     * 归并排序 求降序对的个数
+     */
+    private static void process(int[] originArr, int L, int R, int power, int[] record) {
+        if (L == R) {
+            return;
+        }
+        int mid = L + ((R - L) >> 1);
+        process(originArr, L, mid,power -1, record);
+        process(originArr,mid+1, R,power-1,record);
+        record[power] += merge(originArr,L,mid,R);
+    }
+
+    private static int merge(int[] arr, int l, int m, int r) {
+        int[] help = new int[r - l + 1];
+        int i = 0;
+        int p1 = l;
+        int p2 = m + 1;
+        int ans = 0;
+        while (p1 <= m && p2 <= r) {
+            ans += arr[p1] > arr[p2] ? (m - p1 + 1) : 0;
+            help[i++] = arr[p1] <= arr[p2] ? arr[p1++] : arr[p2++];
+        }
+        while (p1 <= m) {
+            help[i++] = arr[p1++];
+        }
+        while (p2 <= r) {
+            help[i++] = arr[p2++];
+        }
+        for (i = 0; i < help.length; i++) {
+            arr[l+i] = help[i];
         }
         return ans;
     }
